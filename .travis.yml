@@ -1,0 +1,18 @@
+language: python
+branches:
+  only:
+    - main
+    - /(\d+\.?)+/
+services:
+  - docker
+install:
+  - pip install -r requirements.txt
+  - pip install flake8 coverage codecov
+  - travis_fold start "Build.Image" && docker build . -t vent && docker run vent --help && docker image ls vent && travis_fold end "Build.Image"
+script:
+  - stty cols 120
+  - travis_fold start "Run.Tests" && coverage run -m pytest -v --log-level=DEBUG tests && travis_fold end "Run.Tests"
+  - travis_fold start "Integration.Tests" && pip install . && ventilator --help && ventilator -i tests/docker-compose.yml && travis_fold end "Integration.Tests"
+  - flake8
+after_success:
+  - codecov
