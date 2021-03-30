@@ -1,0 +1,4 @@
+default-action: 'keep'
+services:
+  front-end:
+    action: 'keep'

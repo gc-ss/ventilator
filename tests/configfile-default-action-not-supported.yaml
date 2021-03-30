@@ -1,4 +1,4 @@
-default-action: 'mock'
+default-action: 'mocky'
 services:
   front-end:
     action: 'keep'
@@ -11,3 +11,4 @@ services:
   user-db:
     action: 'drop'
   orders-db:
+    action: 'drop'

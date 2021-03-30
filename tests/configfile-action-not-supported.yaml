@@ -5,9 +5,10 @@ services:
   catalogue:
     action: 'mock'
   carts-db:
-    action: 'drop'
+    action: 'dropy'
   catalogue-db:
     action: 'drop'
   user-db:
     action: 'drop'
   orders-db:
+    action: 'drop'
