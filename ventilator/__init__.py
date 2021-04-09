@@ -4,6 +4,9 @@ import argparse
 import logging
 import os
 from os import path
+from pathlib import Path
+
+from shutil import copyfile, SameFileError
 
 import yaml
 
@@ -46,6 +49,7 @@ class Tool:
         self._read_input()
         self._configure()
         self._read_mock_input()
+        self._copy_dependency_files()
         self._write_output()
 
     def _read_input(self):
@@ -71,6 +75,25 @@ class Tool:
 
     def _configure(self):
         self.adapter.configure()
+
+    def _copy_dependency_files(self):
+        if isinstance(self.adapter.mock, EmptyMock) or self.adapter.mock is None:
+            return
+        logging.info(self.adapter.mock.file_list)
+        for file_to_be_copied in self.adapter.mock.file_list:
+            file_path = path.join(self.output, file_to_be_copied)
+            logging.info(file_path)
+            file_directory = path.join(str(Path().absolute()), '/'.join(
+                file_path.split('/')[0:len(file_path.split('/')) - 1]))
+            try:
+                Path(file_directory).mkdir(parents=True)
+            except FileExistsError:
+                pass
+            try:
+                copyfile(file_to_be_copied, file_path)
+                logging.info(f"{file_path} Created.")
+            except SameFileError:
+                pass
 
     def _write_output(self):
         file_path = self.output + '/{}'.format(OUTPUT_DC_FILENAME)
