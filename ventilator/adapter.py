@@ -45,7 +45,8 @@ class EmptyAdapter(Adapter):
             self.file_content = yaml.load(fp.read(), Loader=yaml.FullLoader)
 
     def output(self):
-        return yaml.dump(self.file_content)
+        logging.info("No configuration passed")
+        return yaml.dump(self.file_content, sort_keys=False)
 
     def validate_input(self):
         pass
@@ -136,7 +137,7 @@ class DCInput(Adapter):
             self.content_configured[service_name]['environment'] = \
                 [MOCKINTOSH_SERVICE['environment'][0].replace('80', str(service_value['ports'][0]))]
         if 'port' in mock_service:
-            self.content_configured[service_name]['ports'] = [mock_service['port']]
+            # self.content_configured[service_name]['ports'] = [mock_service['port']]
             self.content_configured[service_name]['environment'] = \
                 [MOCKINTOSH_SERVICE['environment'][0].replace('80', str(mock_service['port']))]
         self.content_configured[service_name]['command'] = MOCKINTOSH_SERVICE['command']
@@ -153,12 +154,12 @@ class DCInput(Adapter):
         if self.mock is None:
             content_configured['services'] = self.content_configured
             self.content_configured = content_configured
-            return yaml.dump(self.content_configured)
+            return yaml.dump(self.content_configured, sort_keys=False)
         else:
             self.content_configured = content_configured
             content_configured['services'] = self.mock.mocked_content
 
-            return yaml.dump(content_configured)
+            return yaml.dump(content_configured, sort_keys=False)
 
 
 class K8SInput(Adapter):
